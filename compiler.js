@@ -26,7 +26,7 @@ class formatToken{
         this.type = type;
         this.val = val;
 
-        return this.val? `@!${this.type}!${val}`: `@!${this.type}!`
+        return this.val? `@${this.type}:${val}`: `@${this.type}`
     }
 }
 class Lexer{
@@ -92,10 +92,11 @@ class Lexer{
     }
     returnNumberToken(token){
         let num = '';
-        let isFloatingPoint = false;
+        let isFloatingPoint = "Int";
 
         while(this.atChar !== null && digits+".".includes(this.atChar)){
             if(this.atChar === "." && !isFloatingPoint){
+                isFloatingPoint = "Flt";
                 num += this.atChar;
                 this.next();
             }else if(digits.includes(this.atChar)){
@@ -104,7 +105,7 @@ class Lexer{
             }
         }
 
-        return isFloatingPoint? `@!Flt!${num}`: `@!Int!${num}`;
+        return formatToken(isFloatingPoint, num);
     }
 
 }
