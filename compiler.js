@@ -48,6 +48,7 @@ class Lexer{
     intoToken(){
         this.tokens = [];
         while (this.index < this.text.length){
+
             switch (this.atChar){
                 case " /t":
                     this.next();
@@ -81,14 +82,15 @@ class Lexer{
 
                         this.tokens.push(this.returnNumberToken(this.atChar));
                         this.next();
-                    }else{
+                    }
+                    else{
                         this.tokens = []
                         this.next();
                         return new Error("Incorrect Char", this.atChar)
                     }
                     break;
-
             }
+
         }
         return this.tokens;
 
