@@ -21,14 +21,17 @@ class Error{
         return `@!${name}! ${msg}`;
     }
 }
-class formatToken{
-    constructor(type, val = false) {
+class formatToken {
+    constructor(type, val = null) {
         this.type = type;
         this.val = val;
+    }
 
-        return this.val? `@${this.type}:${val}`: `@${this.type}`
+    formattedToken() {
+        return this.val !== null ? `@${this.type}:${this.val}` : `@${this.type}`;
     }
 }
+
 class Lexer{
     constructor(text) {
         this.text = text;
@@ -44,33 +47,33 @@ class Lexer{
     }
     intoToken(){
         this.tokens = [];
-        while (this.atChar !== undefined || this.atChar !== null){
+        while (this.index < this.text.length){
             switch (this.atChar){
                 case " /t":
                     this.next();
                     break;
                 case "+":
-                    this.tokens.push(new formatToken(token["Plus"]));
+                    this.tokens.push(new formatToken(token["Plus"]).formattedToken());
                     this.next();
                     break;
                 case "-":
-                    this.tokens.push(new formatToken(token["Minus"]));
+                    this.tokens.push(new formatToken(token["Minus"]).formattedToken());
                     this.next();
                     break;
                 case "#":
-                    this.tokens.push(new formatToken(token["Mult"]));
+                    this.tokens.push(new formatToken(token["Mult"]).formattedToken());
                     this.next();
                     break;
                 case "%":
-                    this.tokens.push(new formatToken(token["Division"]));
+                    this.tokens.push(new formatToken(token["Division"]).formattedToken());
                     this.next();
                     break;
                 case "(":
-                    this.tokens.push(new formatToken(token["BrL"]));
+                    this.tokens.push(new formatToken(token["BrL"]).formattedToken());
                     this.next();
                     break;
                 case ")":
-                    this.tokens.push(new formatToken(token["BrR"]));
+                    this.tokens.push(new formatToken(token["BrR"]).formattedToken());
                     this.next();
                     break;
                 default:
@@ -94,8 +97,8 @@ class Lexer{
         let num = '';
         let isFloatingPoint = "Int";
 
-        while(this.atChar !== null && digits+".".includes(this.atChar)){
-            if(this.atChar === "." && !isFloatingPoint){
+        while(this.index < this.text.length && digits+".".includes(this.atChar)){
+            if(this.atChar === "." && isFloatingPoint === "Int"){
                 isFloatingPoint = "Flt";
                 num += this.atChar;
                 this.next();
@@ -105,7 +108,7 @@ class Lexer{
             }
         }
 
-        return formatToken(isFloatingPoint, num);
+        return new formatToken(isFloatingPoint, num).formattedToken();
     }
 
 }
