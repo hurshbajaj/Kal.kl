@@ -81,7 +81,6 @@ class Lexer{
                     if(digits.includes(this.atChar)){
 
                         this.tokens.push(this.returnNumberToken(this.atChar));
-                        this.next();
                     }
                     else{
                         this.tokens = []
@@ -99,7 +98,7 @@ class Lexer{
         let num = '';
         let isFloatingPoint = "Int";
 
-        while(this.index < this.text.length && digits+".".includes(this.atChar)){
+        while(this.index < this.text.length && [...digits, "."].includes(this.atChar)){
             if(this.atChar === "." && isFloatingPoint === "Int"){
                 isFloatingPoint = "Flt";
                 num += this.atChar;
@@ -108,8 +107,8 @@ class Lexer{
                 num += this.atChar;
                 this.next();
             }
-        }
 
+        }
         return new formatToken(isFloatingPoint, num).formattedToken();
     }
 

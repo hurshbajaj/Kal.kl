@@ -7,7 +7,7 @@ const readline = require('readline').createInterface({
 
 function shell(){
     readline.question("@Run  ", input => {
-        if(input === "!") readline.close();
+        if(input === "!" || input === "close") readline.close();
         else{
             let output_ = compiler.run(input);
             console.log(output_, "\n")
