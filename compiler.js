@@ -1,5 +1,6 @@
 //Tokens
 
+const path = require("node:path");
 const token = {
     'Int': "Int",
     'Flt': "Flt",
@@ -50,7 +51,7 @@ class Lexer{
         while (this.index < this.text.length){
 
             switch (this.atChar){
-                case " /t":
+                case " ":
                     this.next();
                     break;
                 case "+":
@@ -114,6 +115,84 @@ class Lexer{
 
 }
 
+class Parser{
+    constructor(tokenizedArr){
+        this.tokenizedArr = tokenizedArr;
+
+        this.i = -1;
+        this.atChar = null;
+
+        this.parsedArr = [];
+        this.next();
+    }
+    next(){
+        this.i += 1;
+        this.atChar = this.tokenizedArr[this.i] != null ?  this.tokenizedArr[this.i]: undefined;
+    }
+    binOp(leftNode,operator ,rightNode){
+        return `(${leftNode},${operator},${rightNode})`;
+    }
+    type(node){
+        return node !== undefined?node.split(":")[0]: undefined;
+    }
+    isNodeFactor(node){
+        let status = ['@Int', "@Flt"].includes(this.type(node));
+        if(status){
+            return node;
+        }
+        else{
+            return undefined;
+        }
+    }
+    isNodeOp(operator){
+        let status = ["@Mult", "@Division", "@Plus", "@Minus"].includes(this.type(operator));
+        if(status){
+            return operator;
+        }
+        else{
+            return undefined;
+        }
+    }
+    intoTermExpression() {
+        let left = this.isNodeFactor(this.atChar);
+        this.next();
+        this.parsedArr.push(left);
+
+        let operator = this.isNodeOp(this.atChar);
+        console.log(operator)
+        if(!operator){
+            this.parsedArr.push(left)
+            return;
+        }
+
+        while (this.atChar && ["@Plus", "@Minus"].includes(this.type(this.atChar))) {
+            console.log("iteration")
+            operator = this.isNodeOp(this.atChar);
+            this.parsedArr.push(operator);
+            this.next();
+            let right = this.isNodeFactor(this.atChar);
+
+            this.parsedArr.push(right);
+            this.next();
+        }
+    }
+
+
+
+
+
+    parse(){
+
+        this.intoTermExpression();
+
+        return this.parsedArr;
+    }
+}
+
+
 module.exports.run=(input)=>{
-    return new Lexer(input).intoToken();
+    let lexed = new Lexer(input).intoToken();
+    let parser = new Parser(lexed);
+    let parsed = parser.parse();
+    return parsed;
 }

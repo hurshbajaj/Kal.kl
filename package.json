@@ -1,0 +1,12 @@
+{
+  "name": "kal.kl",
+  "version": "1.0.0",
+  "main": "compiler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "kal": "node shell.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
